@@ -20,7 +20,9 @@ export default function Home() {
         setIsPending(true)
         //get the database collection name and input into the connection method (async)
         //get the resupt as a snapshot which is an array of objects
-        projectFirestore.collection('recipes').get().then((snapshot) => {
+
+        //Changed to a realtime data collection to monitor data using onSnashot method
+       const unSub = projectFirestore.collection('recipes').onSnapshot((snapshot) => {
             // check if snapshot is empty and set the error message
             if(snapshot.empty){
                 setError('no recipes to load')
@@ -36,11 +38,13 @@ export default function Home() {
                 setData(results)
                 setIsPending(false)
             }
-            //create a catch statement to recieve error
-        }).catch(err => {
-           setError(err.message)
-           setIsPending(false) 
+          
+        }, (err) => {
+            setError(err.message)
+            setIsPending(false)
         })
+
+        return () => unSub()
     },[])
 
     //getting exported data from useFetch Hooks
