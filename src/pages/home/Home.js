@@ -22,6 +22,7 @@ export default function Home() {
         //get the resupt as a snapshot which is an array of objects
 
         //Changed to a realtime data collection to monitor data using onSnashot method
+        // projectFirestore.collection('recipes').get().then((snapshot) => {
        const unSub = projectFirestore.collection('recipes').onSnapshot((snapshot) => {
             // check if snapshot is empty and set the error message
             if(snapshot.empty){
