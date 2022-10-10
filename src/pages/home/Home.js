@@ -14,10 +14,33 @@ import RecipeList from '../../components/RecipeList'
 export default function Home() {
     const [data, setData] = useState(null)
     const [isPending, setIsPending] = useState(false)
-    const [errir, setError] = useState(false)
+    const [error, setError] = useState(false)
 
     useEffect(() => {
-
+        setIsPending(true)
+        //get the database collection name and input into the connection method (async)
+        //get the resupt as a snapshot which is an array of objects
+        projectFirestore.collection('recipes').get().then((snapshot) => {
+            // check if snapshot is empty and set the error message
+            if(snapshot.empty){
+                setError('no recipes to load')
+                setIsPending(false)
+            }else{
+                //create an empty array, loop through the snapshot.docs object using the forEach method
+                //and push the objects into the empty array using the spread operator.
+                let results = []
+                snapshot.docs.forEach(doc => {
+                    results.push({ id: doc.id, ...doc.data() })
+                })
+                //after the forEach loop is completed set the new array to the data state.
+                setData(results)
+                setIsPending(false)
+            }
+            //create a catch statement to recieve error
+        }).catch(err => {
+           setError(err.message)
+           setIsPending(false) 
+        })
     },[])
 
     //getting exported data from useFetch Hooks
